@@ -590,9 +590,9 @@ Start semantic mode for all files it can parse
 ** SLIME
 Load slime for clisp hacking 
 #+BEGIN_SRC emacs-lisp
-(load (expand-file-name "~/quicklisp/slime-helper.el"))
-(add-to-list 'load-path "~/.emacs-lisp/slime")
-(setq inferior-lisp-program "/usr/bin/sbcl")
+;(load (expand-file-name "~/quicklisp/slime-helper.el"))
+;(add-to-list 'load-path "~/.emacs-lisp/slime")
+;(setq inferior-lisp-program "/usr/bin/sbcl")
 (require 'slime-autoloads)
 (add-hook 'lisp-mode-hook (lambda () (slime-mode t)))
 (add-hook 'inferior-lisp-mode-hook (lambda () (inferior-slime-mode t)))
@@ -772,11 +772,11 @@ to invoke?
                                  (t nil))) (directory-files dir)))))
   
     (setq org-agenda-include-diary t)
-    (setq org-agenda-files (slurp-org-files "~/Dropbox/org"))
+    ;(setq org-agenda-files (slurp-org-files "~/Dropbox/org"))
   ;(mapc (slurp-org-files "~/Dropbox/org"))
   
   (add-to-list 'org-agenda-files "~/.emacs-lisp/init.org")
-  (add-to-list 'org-agenda-files "~/Dropbox/grow/todo_bframe.org")
+  ;(add-to-list 'org-agenda-files "~/Dropbox/grow/todo_bframe.org")
 #+END_SRC
 ** Appointment Notifications
 Set appropriate variables for appointment pop-ups 5mins before they
