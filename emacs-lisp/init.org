@@ -19,23 +19,14 @@ Compile files that have already been compiled before.
 #+END_SRC
 ** Set up ELPA
 #+BEGIN_SRC emacs-lisp
-    (setq package-archives '(("org" . "http://orgmode.org/elpa/")
+    (setq package-archives '(("org" . "https://orgmode.org/elpa/")
                              ("ELPA" . "http://tromey.com/elpa/") 
                              ("gnu" . "http://elpa.gnu.org/packages/")
-                             ("marmalade" . "http://marmalade-repo.org/packages/")
-                             ("melpa" . "http://melpa.org/packages/")))
-  (setq package-enable-at-startup nil)
-  (package-initialize)
+                             ("melpa" . "https://melpa.org/packages/")))
 (require 'use-package)
 #+END_SRC
-** Paradox Package Token
-#+BEGIN_SRC emacs-lisp
-  (use-package paradox
-    :init
-    (setq paradox-github-token  "10d1f4c6c3d85894cec0a53d1b9a0540002a7659"))
-#+END_SRC
 ** Notifications
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs lisp
 (use-package notify)
 #+END_SRC
 * Internet
@@ -48,121 +39,27 @@ Compile files that have already been compiled before.
       '(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'" "/tmp/\\2" t)
 	("\\`/?\\([^/]*/\\)*\\([^/]*\\)\\'" "~/.emacs.d/auto-save/" t)))
 #+END_SRC
-** Browsing stuffs
-Google region (awesome) (taken from: http://blog.tedroden.com/emacs/google_region.ejr)
-#+BEGIN_SRC emacs-lisp
-(defun google-region (&optional flags)
-  "Google the selected region"
-  (interactive)
-  (let ((query (buffer-substring (region-beginning) (region-end))))
-    (browse-url (concat "http://www.google.com/search?ie=utf-8&oe=utf-8&q=" query))))
-;; press control-c g to google the selected region
-(global-set-key (kbd "C-c g") 'google-region)
-#+END_SRC
-Work around for firefox 36+ and browse url
-#+BEGIN_SRC emacs-lisp
-  (defun browse-url-firefox (url &optional new-window)
-      "Ask the Firefox WWW browser to load URL.
-    Default to the URL around or before point.  The strings in
-    variable `browse-url-firefox-arguments' are also passed to
-    Firefox.
-    
-    When called interactively, if variable
-    `browse-url-new-window-flag' is non-nil, load the document in a
-    new Firefox window, otherwise use a random existing one.  A
-    non-nil interactive prefix argument reverses the effect of
-    `browse-url-new-window-flag'.
-    
-    If `browse-url-firefox-new-window-is-tab' is non-nil, then
-    whenever a document would otherwise be loaded in a new window, it
-    is loaded in a new tab in an existing window instead.
-    
-    When called non-interactively, optional second argument
-    NEW-WINDOW is used instead of `browse-url-new-window-flag'."
-      (interactive (browse-url-interactive-arg "URL: "))
-      (setq url (browse-url-encode-url url))
-      (let* ((process-environment (browse-url-process-environment))
-             (window-args (if (browse-url-maybe-new-window new-window)
-                              (if browse-url-firefox-new-window-is-tab
-                                  '("-new-tab")
-                                '("-new-window"))))
-             (ff-args (append browse-url-firefox-arguments window-args (list url)))
-             (process-name (concat "firefox " url))
-             (process (apply 'start-process process-name nil
-                             browse-url-firefox-program ff-args) )) ))
-#+END_SRC
 ** ERC
 #+BEGIN_SRC emacs-lisp
-(erc-match-mode 1)
-(defun notify-erc (match-type nickuserhost message)
-  "Notify when a message is received."
-  (notify (format "%s in %s"
-                  ;; Username of sender
-                  (car (split-string nickuserhost "!"))
-                  ;; Channel
-                  (or (erc-default-target) "#unknown"))
-          ;; Remove duplicate spaces
-          (replace-regexp-in-string " +" " " message)
-          :icon "emacs-snapshot"
-          :timeout -1))
-
-(add-hook 'erc-text-matched-hook #'notify-erc)
-(setq erc-track-enable-keybindings nil)
-#+END_SRC
-** Jabber
-#+BEGIN_SRC emacs-lisp
-  (use-package jabber
-    :ensure t
-    :init
-    (setq jabber-nickname "Dave"
-          jabber-account-list '(("dbjergaard@gmail.com"
-                                 (:network-server . "talk.google.com")
-                                 (:port . 443)
-                                 (:connection-type . ssl))
-                                ("david.bjergaard@gmail.com"
-                                 (:network-server . "talk.google.com")
-                                 (:port . 443)
-                                 (:connection-type . ssl)))
-          jabber-message-alert-same-buffer nil
-          jabber-vcard-avatars-retrieve t)
-    (setq-default jabber-mode-line-string " ")
-    :config
-    (add-hook 'jabber-chat-mode-hook 'goto-address)
-    (defun libnotify-jabber-notify (from buf text proposed-alert)
-      "Notify new Jabber chat message via notify"
-      (when (or jabber-message-alert-same-buffer
-                (not (memq (selected-window) (get-buffer-window-list buf))))
-        (if (jabber-muc-sender-p from)
-            (notify (format "(PM) %s"
-                            (jabber-jid-displayname (jabber-jid-user from)))
-                    (format "%s: %s" (jabber-jid-resource from) text)))
-        (notify (format "%s" (jabber-jid-displayname from))
-                text)))
-    (defun jabber-reconnect-all ()
-      "Disconnects, reconnects, and sends online status to all configured jabber accounts"
-      (interactive)
-      (jabber-disconnect)
-      (unless (equal 2 (length jabber-connections))
-        (jabber-connect-all)
-        (jabber-send-presence "" "" 10)))
-    
-    (add-hook 'jabber-alert-message-hooks #'libnotify-jabber-notify)
-    (add-hook 'jabber-post-connect-hooks (lambda ()
-                                           (jabber-mode-line-mode)
-                                           (setq jabber-mode-line-string " ")))
-    (add-hook 'jabber-chat-mode-hook #'emojify-mode))
-#+END_SRC
-** Twitter
-#+BEGIN_SRC emacs-lisp
-  (use-package twittering-mode
-    :init
-    (setq twittering-use-master-password t
-          twittering-timer-interval 300
-          twittering-icon-mode t
-          twittering-url-show-status nil
-          twittering-tinyurl-service 'bit.ly)
-    :config
-    (add-hook 'twittering-edit-mode (lambda () (ispell-minor-mode) (flyspell-mode))))
+;(erc-match-mode 1)
+  (defun notify-erc (match-type nickuserhost message)
+    "Notify when a message is received."
+    (notify (format "%s in %s"
+		    ;; Username of sender
+		    (car (split-string nickuserhost "!"))
+		    ;; Channel
+		    (or (erc-default-target) "#unknown"))
+	    ;; Remove duplicate spaces
+	    (replace-regexp-in-string " +" " " message)
+	    :icon "emacs-snapshot"
+	    :timeout -1))
+  (load "~/.emacs-lisp/ercpass.el")
+  (require 'erc-services)
+  (erc-services-mode t)
+  (setq erc-nickserv-passwords
+	`((freenode     (("dmb2" . ,freenode-dmb2-pass)))))
+  (add-hook 'erc-text-matched-hook #'notify-erc)
+  (setq erc-track-enable-keybindings nil)
 #+END_SRC
 ** Email
 #+BEGIN_SRC emacs-lisp
@@ -193,7 +90,6 @@ Make sentences end with one space instead of two spaces
     (evil-leader/set-leader ",")
     (evil-leader/set-key
       "m" #'compile
-      "j" #'jabber-reconnect-all
       "l" #'linum-mode))
   (use-package evil
     :ensure t
@@ -201,36 +97,40 @@ Make sentences end with one space instead of two spaces
     (fset 'evil-visual-update-x-selection 'ignore)
     (define-key evil-normal-state-map (kbd "C-k") #'evil-scroll-up)
     (define-key evil-normal-state-map (kbd "C-j") #'evil-scroll-down)
+    (define-key evil-normal-state-map (kbd "M-.") nil)
+    (define-key evil-normal-state-map (kbd "M-,") nil)
+    (setq evil-undo-system 'undo-redo)
     (mapc (lambda (mode-map)
-            (evil-add-hjkl-bindings mode-map 'emacs)) '(ibuffer-mode-map
-                                                        jabber-roster-mode-map
-                                                        gnus-group-mode-map
-                                                        gnus-server-mode-map
-                                                        gnus-browse-mode-map
-                                                        gnus-summary-mode-map
-                                                        gnus-article-mode-map
-                                                        package-menu-mode-map))
+	    (evil-add-hjkl-bindings mode-map 'emacs)) 
+	  '(ibuffer-mode-map
+	    jabber-roster-mode-map
+	    gnus-group-mode-map
+	    gnus-server-mode-map
+	    gnus-browse-mode-map
+	    gnus-summary-mode-map
+	    gnus-article-mode-map
+	    package-menu-mode-map))
     (defun evil-visual-update-x-selection (&optional buffer)
     "Update the X selection with the current visual region."
     (with-current-buffer (or buffer (current-buffer))
       (when (and (evil-visual-state-p)
-                 (fboundp 'x-set-selection)   
-                 (or (not (boundp 'ns-initialized))
-                     (with-no-warnings ns-initialized))
-                 (not (eq evil-visual-selection 'block)))
-        (x-set-selection 'PRIMARY (buffer-substring-no-properties
-                                   evil-visual-beginning
-                                   evil-visual-end))
-        (setq x-last-selected-text-primary nil))))
+		 (fboundp 'x-set-selection)   
+		 (or (not (boundp 'ns-initialized))
+		     (with-no-warnings ns-initialized))
+		 (not (eq evil-visual-selection 'block)))
+	(x-set-selection 'PRIMARY (buffer-substring-no-properties
+				   evil-visual-beginning
+				   evil-visual-end))
+	(setq x-last-selected-text-primary nil))))
     (evil-define-motion evil-little-word (count)
       :type exclusive
       (let* ((case-fold-search nil)
-             (count (if count count 1)))
-        (while (> count 0)
-          (forward-char)
-          (search-forward-regexp "[_A-Z]\\|\\W" nil t)
-          (backward-char)
-          (decf count))))
+	     (count (if count count 1)))
+	(while (> count 0)
+	  (forward-char)
+	  (search-forward-regexp "[_A-Z]\\|\\W" nil t)
+	  (backward-char)
+	  (decf count))))
     (define-key evil-operator-state-map (kbd "lw") #'evil-little-word))
   (use-package evil-surround
     :ensure t
@@ -268,9 +168,9 @@ Make sentences end with one space instead of two spaces
             (lambda ()
               ;; Set dired-x buffer-local variables here.  For example:
               (define-key dired-mode-map "c" 'dired-copy-filename)))
-  (setq dired-guess-shell-alist-user '(("\\.djvu$" "evince")
-                                       ("\\.pdf$" "evince")
-                                       ("\\.ps$" "evince"))
+  (setq dired-guess-shell-alist-user '(("\\.djvu$" "xpdf")
+                                       ("\\.pdf$" "xpdf")
+                                       ("\\.ps$" "xpdf"))
         dired-listing-switches "-alh"
         dired-omit-files "^\\.?#\\|^\\.?~\\|^\\.[A-Za-z0-9]"
         dired-recursive-copies 'always
@@ -290,19 +190,17 @@ Make sentences end with one space instead of two spaces
 #+END_SRC
 *** Custom rebinds for better productivity
 #+BEGIN_SRC emacs-lisp
-  (global-set-key "\C-x\C-m" #'execute-extended-command)
-  (global-set-key "\C-c\C-m" #'execute-extended-command)
   (global-set-key "\C-w" #'backward-kill-word)
   (global-set-key "\C-x\C-k" #'kill-region)
   (global-set-key "\C-c\C-k" #'kill-region)
 
   (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
   (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-
-  ;; (global-set-key (kbd "M-j")
-  ;;                 (lambda ()
-  ;;                   (interactive)
-  ;;                   (join-line -1)))
+  (global-set-key (kbd "C-M-=") #'indent-region)
+  (global-set-key (kbd "M-j")
+                  (lambda ()
+                    (interactive)
+                    (join-line -1)))
 #+END_SRC
 *** Toggle-Map
 [[http://endlessparentheses.com/the-toggle-map-and-wizardry.html][Taken from here]]
@@ -467,7 +365,7 @@ the vc status which I can't quite get right.
          mode-line-misc-info
          mode-line-end-spaces))
   (setq global-mode-string '((t jabber-activity-mode-string)
-                            evil-mode-line-tag
+                            ;evil-mode-line-tag
                             "" display-time-string appt-mode-string)) ;
 #+END_SRC
 *** Custom scratch message
@@ -543,14 +441,6 @@ anyway.
   (interactive "r")
   (replace-regexp "\\([^\n]\\)\n\\([^ *\n]\\)" "\\1 \\2" nil begin end))
 #+END_SRC
-*** Filladapt
-#+BEGIN_SRC emacs-lisp
-  (use-package filladapt
-    :config
-    (add-hook 'text-mode-hook 'turn-on-filladapt-mode)
-    (add-hook 'text-mode-hook 'turn-on-auto-fill)
-    (add-hook 'c-mode-hook 'turn-off-filladapt-mode))
-#+END_SRC
 *** Aspell spell checking on the fly 
 #+BEGIN_SRC emacs-lisp
   (setq ispell-program-name "aspell"
@@ -596,12 +486,6 @@ anyway.
     (setq interprogram-paste-function #'x-cut-buffer-or-selection-value))
 #+END_SRC
 
-** C-eldoc
-#+BEGIN_SRC emacs-lisp
-  ;(add-hook 'c-mode-hook 'c-turn-on-eldoc-mode)
-  ;(add-hook 'c++-mode-hook 'c-turn-on-eldoc-mode)
-  ;(setq c-eldoc-includes "-I/home/dave/root/include -I./ -I../ -I./include -I../include -I/home/dave/bFrame/external/include -I/home/dave/bFrame/external/RootCorePackages/RootCore/include -I/home/dave/bFrame" )
-#+END_SRC
 ** Comments
 #+BEGIN_SRC emacs-lisp
   (defun comment-or-uncomment-line-or-region ()
@@ -615,96 +499,61 @@ anyway.
 ** Delimiters (parens and family)
 *** Smartparens
 #+BEGIN_SRC emacs-lisp
-  (use-package smartparens
-    :ensure t
-    :config 
-    (smartparens-global-mode t)
-    (show-smartparens-global-mode t)
-    (require 'smartparens-config)
-    (require 'smartparens-ruby)
-    (sp-with-modes '(rhtml-mode)
-      (sp-local-pair "<" ">")
-      (sp-local-pair "<%" "%>"))
-    (sp-with-modes '(org-mode)
-      (sp-local-pair "$" "$")))
+    (use-package smartparens
+      :ensure t
+      :config 
+      (smartparens-global-mode t)
+      (show-smartparens-global-mode t)
+      (require 'smartparens-config)
+      (require 'smartparens-ruby)
+      (sp-with-modes '(rhtml-mode)
+        (sp-local-pair "<" ">")
+        (sp-local-pair "<%" "%>"))
+      (sp-with-modes '(org-mode)
+        (sp-local-pair "$" "$")))
 #+END_SRC
 
 ** SLIME
 Load slime for clisp hacking 
 #+BEGIN_SRC emacs-lisp
-(load (expand-file-name "~/quicklisp/slime-helper.el"))
 (setq inferior-lisp-program "sbcl")
+#+END_SRC
+
+
+#+BEGIN_SRC emacs lisp
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
 (require 'slime-autoloads)
 (add-hook 'lisp-mode-hook (lambda () (slime-mode t)))
 (add-hook 'inferior-lisp-mode-hook (lambda () (inferior-slime-mode t)))
 (slime-setup '(slime-fancy)) ; almost everything
 #+END_SRC
-*** Slime tweaks 
+** CLHS
 #+BEGIN_SRC emacs-lisp
-  (defvar electrify-return-match
-    "[\]}\)\"]"
-    "If this regexp matches the text after the cursor, do an \"electric\"
-    return.")
-
-  (defun electrify-return-if-match (arg)
-    "If the text after the cursor matches `electrify-return-match' then
-    open and indent an empty line between the cursor and the text.  Move the
-    cursor to the new line."
-    (interactive "P")
-    (let ((case-fold-search nil))
-      (if (looking-at electrify-return-match)
-          (progn (save-excursion (newline-and-indent))
-                 (forward-char arg))
-        (newline arg))
-      (indent-according-to-mode)))
-
-  ;; Using local-set-key in a mode-hook is a better idea.
-  (global-set-key (kbd "RET") 'electrify-return-if-match)
-#+END_SRC
-** Octave
-Start octave mode for *.m files
-#+BEGIN_SRC emacs-lisp
-  (autoload 'octave-mode "octave-mod" nil t)
-  (setq auto-mode-alist
-        (cons '("\\.m$" . octave-mode) auto-mode-alist))
-  (add-hook 'octave-mode-hook
-            (lambda ()
-              (abbrev-mode 1)
-              (auto-fill-mode 1)
-              (when (eq window-system 'x)
-                (font-lock-mode 1))))
+  (add-to-list 'load-path "~/.emacs-lisp/gcl-info")
+  (require 'get-gcl-info)
 #+END_SRC
 * Misc
 ** Color Theme
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'custom-theme-load-path "~/.emacs-lisp/base16-emacs")
   (setq current-theme 'solarized-dark)
+  (setq dark-theme 'solarized-dark)
+  (setq light-theme 'solarized-light)
+
   (load-theme current-theme t)
   (defun toggle-themes ()
     (interactive)
-    (cond ((eq current-theme 'solarized-light) 
-           (setq current-theme 'solarized-dark)
+    (cond ((eq current-theme light-theme) 
+           (setq current-theme dark-theme)
            (shell-command "xrdb -load ~/.Xresources-dark"))
-          ((eq current-theme 'solarized-dark)
-           (setq current-theme 'solarized-light)
+          ((eq current-theme dark-theme)
+           (setq current-theme light-theme)
            (shell-command "xrdb -load ~/.Xresources-light")))
     (load-theme current-theme))
 #+END_SRC
-(setq cities '((durham . (36.0 -79.0))
-               (mandan . (46.8 100.9))
-               (geneva . (46.2 6.1))))
 
-(setq
- calendar-latitude (cadr (assoc 'durham cities))
- calendar-longitude (caddr (assoc 'durham cities)))
-
-** TODO Switch Theme at Sunrise/Sunset
-Implement a sunrise-sunset hook, and use it to switch the theme
-between light/dark.
-Use timers (cf. [[info:elisp#Timers]])
 ** Default font
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(font . "Inconsolata-14"))
+(add-to-list 'default-frame-alist '(font . "Fira Mono-12"))
 #+END_SRC
 ** Font tweaks
 More readable fonts for non-programming modes
@@ -712,76 +561,95 @@ More readable fonts for non-programming modes
 (dolist (hook '(erc-mode-hook
 		;LaTeX-mode-hook
 		Info-mode-hook
-		jabber-chat-mode-hook
 		edit-server-start-hook
 		markdown-mode-hook
 		w3m-mode))
   (add-hook hook (lambda () (variable-pitch-mode t) )))
 #+END_SRC
-** EMMS
-Emacs can play music?!
-#+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path "~/.emacs-lisp/emms/lisp")
-  (require 'emms-setup)
-  (emms-standard)
-  (emms-default-players)
-  (setq emms-playlist-buffer-name "*Music*")
-  (setq emms-source-file-default-directory "~/Music")
-  (require 'emms-info-libtag)
-  (setq emms-info-functions '(emms-info-libtag))
-#+END_SRC
 ** Diary
 #+BEGIN_SRC emacs-lisp
   (setq diary-file "~/.emacs-lisp/diary")
 #+END_SRC
-** Util functions
+** Markdown mode
+#+BEGIN_SRC emacs-lisp
+  (use-package markdown-mode
+    :ensure t)
+#+END_SRC
+
 ** Hydra
 #+BEGIN_SRC emacs-lisp
+(use-package hydra
+:ensure t)
   (defhydra hydra-zoom (global-map "<f2>")
     "zoom"
     ("g" text-scale-increase "in")
     ("l" text-scale-decrease "out"))
 
-(defhydra hydra-org-template (:color blue :hint nil)
-  "
-_c_enter  _q_uote    _L_aTeX:
-_l_atex   _e_xample  _i_ndex:
-_a_scii   _v_erse    _I_NCLUDE:
-_s_rc     ^ ^        _H_TML:
-_h_tml    ^ ^        _A_SCII:
+ (defhydra hydra-org-template (:color blue :hint nil)
+    "
+ _c_enter  _q_uote     _e_macs-lisp    _L_aTeX:
+ _l_atex   _E_xample   _p_erl          _i_ndex:
+ _a_scii   _v_erse     _P_erl tangled  _I_NCLUDE:
+ _s_rc     _n_ote      plant_u_ml      _H_TML:
+ _h_tml    ^ ^         ^ ^             _A_SCII:
 "
-  ("s" (hot-expand "<s"))
-  ("e" (hot-expand "<e"))
-  ("q" (hot-expand "<q"))
-  ("v" (hot-expand "<v"))
-  ("c" (hot-expand "<c"))
-  ("l" (hot-expand "<l"))
-  ("h" (hot-expand "<h"))
-  ("a" (hot-expand "<a"))
-  ("L" (hot-expand "<L"))
-  ("i" (hot-expand "<i"))
-  ("I" (hot-expand "<I"))
-  ("H" (hot-expand "<H"))
-  ("A" (hot-expand "<A"))
-  ("<" self-insert-command "ins")
-  ("o" nil "quit"))
+    ("s" (hot-expand "<s"))
+    ("E" (hot-expand "<e"))
+    ("q" (hot-expand "<q"))
+    ("v" (hot-expand "<v"))
+    ("n" (hot-expand "<not"))
+    ("c" (hot-expand "<c"))
+    ("l" (hot-expand "<l"))
+    ("h" (hot-expand "<h"))
+    ("a" (hot-expand "<a"))
+    ("L" (hot-expand "<L"))
+    ("i" (hot-expand "<i"))
+    ("e" (hot-expand "<s" "emacs-lisp"))
+    ("p" (hot-expand "<s" "perl"))
+    ("u" (hot-expand "<s" "plantuml :file CHANGE.png"))
+    ("P" (hot-expand "<s" "perl" ":results output :exports both :shebang \"#!/usr/bin/env perl\"\n"))
+    ("I" (hot-expand "<I"))
+    ("H" (hot-expand "<H"))
+    ("A" (hot-expand "<A"))
+    ("<" self-insert-command "ins")
+    ("o" nil "quit"))
 
-(defun hot-expand (str)
-  "Expand org template."
-  (insert str)
-  (org-try-structure-completion))
+  (require 'org-tempo) ; Required from org 9 onwards for old template expansion
+  ;; Reset the org-template expnsion system, this is need after upgrading to org 9 for some reason
+  (setq org-structure-template-alist (eval (car (get 'org-structure-template-alist 'standard-value))))
+  (defun hot-expand (str &optional mod header)
+    "Expand org template.
 
-(define-key org-mode-map "<"
-  (lambda () (interactive)
-     (if (looking-back "^")
-         (hydra-org-template/body)
-       (self-insert-command 1))))
+STR is a structure template string recognised by org like <s. MOD is a
+string with additional parameters to add the begin line of the
+structure element. HEADER string includes more parameters that are
+prepended to the element after the #+HEADER: tag."
+    (let (text)
+      (when (region-active-p)
+        (setq text (buffer-substring (region-beginning) (region-end)))
+        (delete-region (region-beginning) (region-end))
+        (deactivate-mark))
+      (when header (insert "#+HEADER: " header) (forward-line))
+      (insert str)
+      (org-tempo-complete-tag)
+      (when mod (insert mod) (forward-line))
+      (when text (insert text))))
+
+  (define-key org-mode-map "<"
+    (lambda () (interactive)
+      (if (or (region-active-p) (looking-back "^"))
+          (hydra-org-template/body)
+        (self-insert-command 1))))
+
+  (eval-after-load "org"
+    '(cl-pushnew
+    '("not" . "note")
+      org-structure-template-alist))
 #+END_SRC
 
 ** Info tweaks
 #+BEGIN_SRC emacs-lisp 
   (add-to-list 'Info-directory-list "~/local/share/info")
-  (add-to-list 'Info-directory-list "~/rivet/local/share/info")
 #+END_SRC
 ** Calc Tweaks
 #+BEGIN_SRC emacs-lisp
@@ -809,68 +677,34 @@ for adding templates.
   (unless (boundp 'org-latex-classes)
     (setq org-latex-classes nil))
 #+END_SRC
-This is Duke's dissertation class.
+Tufte Latex
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'org-latex-classes
-                   '("dukedissertation"
+                   '("tufte-book"
                      "
-  \\documentclass[]{dukedissertation}
-  \\usepackage[backend=biber]{biblatex}
-  \\usepackage{glossaries}
-  \\usepackage{color}
-  \\usepackage{bm}
-  \\usepackage{amsfonts}
-  \\usepackage{amsthm}
-  \\usepackage{setspace}
-  \\usepackage{slashed}
-  \\usepackage{subfig}
-  \\usepackage[version=3]{mhchem}
+  \\documentclass[]{tufte-book}
+  \\usepackage{booktabs}
+  \\usepackage{tikz}
+  \\usepackage{pgfplots}
+  \\usepackage{amsmath}
+  \\usepackage{graphicx}
+  \\setkeys{Gin}{width=\\linewidth,totalheight=\\textheight,keepaspectratio}
+  \\graphicspath{{graphics\/}}
+  \\usepackage{fancyvrb}
+  \\fvset{fontsize=\\normalsize}
+  \\usepackage{xspace}
+  \\usepackage{units}
+  \\usepackage{makeidx}
   " 
+                     ("\\chapter{%s}" . "\\chapter*{%s}") 
                      ("\\section{%s}" . "\\section{%s}") 
                      ("\\subsection{%s}" . "\\subsection{%s}") 
                      ("\\subsubsection{%s}" . "\\subsubsection{%s}") 
                      ("\\paragraph{%s}" . "\\paragraph{%s}")
                      ("\\subparagraph{%s}" . "\\subparagraph{%s}")))
-  (setq org-latex-table-caption-above nil)
-#+END_SRC
-Revtex 4.1
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'org-latex-classes
-                 '("revtex4-1"
-                   "
-\\documentclass[aps,prl,preprint,citeautoscript,showkeys,floatfix]{revtex4-1}
-\\usepackage{dcolumn}
-\\usepackage{natbib}
-\\usepackage[version=3]{mhchem}
-" 
-                   ("\\section{%s}" . "\\section{%s}") 
-                   ("\\subsection{%s}" . "\\subsection{%s}") 
-                   ("\\subsubsection{%s}" . "\\subsubsection{%s}") 
-                   ("\\paragraph{%s}" . "\\paragraph{%s}")
-                   ("\\subparagraph{%s}" . "\\subparagraph{%s}")))
-#+END_SRC
-ATLAS Note 
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'org-latex-classes
-                 '("atlasdoc"
-                   "
-\\newcommand*{\\ATLASLATEXPATH}{latex/}
-\\documentclass[UKenglish,texlive=2015]{latex/atlasdoc}
-\\usepackage{\\ATLASLATEXPATH atlaspackage}
-\\usepackage{\\ATLASLATEXPATH atlasbiblatex}
-\\usepackage{\\ATLASLATEXPATH atlascontribute}
-\\usepackage{\\ATLASLATEXPATH atlasphysics}
-\\graphicspath{{logos/}{figures/}}
-\\input{ATL-COM-PHYS-2015-XXX-metadata}
-" 
-                   ("\\section{%s}" . "\\section{%s}") 
-                   ("\\subsection{%s}" . "\\subsection{%s}") 
-                   ("\\subsubsection{%s}" . "\\subsubsection{%s}") 
-                   ("\\paragraph{%s}" . "\\paragraph{%s}")
-                   ("\\subparagraph{%s}" . "\\subparagraph{%s}")))
 #+END_SRC
 ** Org Ref
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs lisp
   (use-package org-ref 
       :ensure t
       :config 
@@ -882,26 +716,6 @@ ATLAS Note
 
 #+END_SRC
 ** Agenda Files
-*** TODO Clean up after expanding agenda files
-#+BEGIN_SRC emacs-lisp  
-  (defun db-flatten(x)
-    (cond ((null x) nil)
-      ((listp x) (append (db-flatten (car x)) (db-flatten (cdr x))))
-      (t (list x))))
-
-  (defun slurp-org-files (dir)
-    "Returns a list of org files contained in DIR recursively"
-    (db-flatten (remove nil (mapcar (lambda (file)
-                           (cond ((or (string-match "^\\." file) (string-match "~" file)) nil)
-                                 ((string-match "\.org" file) (concat dir "/" file))
-                                 ((file-accessible-directory-p (concat dir "/" file)) 
-                                  (slurp-org-files (concat dir "/" file)))
-                                 (t nil))) (directory-files dir)))))
-
-    (setq org-agenda-include-diary t)
-    (setq org-agenda-files (slurp-org-files "~/Dropbox/org"))
-  (add-to-list 'org-agenda-files "~/.emacs-lisp/init.org")
-#+END_SRC
 ** Appointment Notifications
 Set appropriate variables for appointment pop-ups 5mins before they
 happen.
@@ -910,102 +724,62 @@ happen.
         appt-display-mode-line t
         appt-display-format 'window)
   (appt-activate 1)
-
-  ;; Inform appt of changes to agenda whenever agenda is viewed
-  (add-hook 'org-finalize-agenda-hook 'org-agenda-to-appt)
-  
-  (defun db-appt-display (min-to-app new-time msg) 
-    (notify (format "Appointment in %s minute(s)" min-to-app) 
-            msg 
-            :icon "/usr/share/icons/gnome/32x32/status/appointment-soon.png" 
-            :urgency "high"))
-  (setq appt-disp-window-function (function db-appt-display))
 #+END_SRC
 ** Misc Org Inits
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'org-latex-classes 
-               '("memoir"
-                 "\\documentclass[12pt]{memoir}" 
-                 ("\\section{%s}" . "\\section*{%s}") 
-                 ("\\subsection{%s}" . "\\subsection*{%s}") 
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}") 
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+	       '("memoir"
+		 "\\documentclass[12pt]{memoir}" 
+		 ("\\section{%s}" . "\\section*{%s}") 
+		 ("\\subsection{%s}" . "\\subsection*{%s}") 
+		 ("\\subsubsection{%s}" . "\\subsubsection*{%s}") 
+		 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+		 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
-  (setq org-export-allow-bind-keywords t)
 
   (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+  (setq help-at-pt-display-when-idle 't)
 
   (global-set-key "\C-cl" 'org-store-link)
   (global-set-key "\C-ca" 'org-agenda)
   (global-set-key "\C-cb" 'org-iswitchb)
 
-                                          ;(require 'org-special-blocks)
-                                          ;(setq org-alphabetical-lists t)
   (define-key mode-specific-map [?a] 'org-agenda)
+  (setcdr (assoc "\\.pdf\\'" org-file-apps) "xpdf %s")
 
   (add-hook 'org-agenda-mode-hook
-            (lambda ()
-              (define-key org-agenda-mode-map "\C-n" 'next-line)
-              (define-key org-agenda-keymap "\C-n" 'next-line)
-              (define-key org-agenda-mode-map "\C-p" 'previous-line)
-              (define-key org-agenda-keymap "\C-p" 'previous-line)
-              ))
-  (setcdr (assoc "\\.pdf\\'" org-file-apps) "evince %s")
+	    (lambda ()
+	      (define-key org-agenda-mode-map "\C-n" 'next-line)
+	      (define-key org-agenda-keymap "\C-n" 'next-line)
+	      (define-key org-agenda-mode-map "\C-p" 'previous-line)
+	      (define-key org-agenda-keymap "\C-p" 'previous-line)))
   (eval-after-load "org"
     '(progn
        (define-prefix-command 'org-todo-state-map)
        (define-key org-mode-map "\C-cx" 'org-todo-state-map)
        (define-key org-todo-state-map "x"
-         #'(lambda nil (interactive) (org-todo "CANCELLED")))
+	 #'(lambda nil (interactive) (org-todo "CANCELLED")))
        (define-key org-todo-state-map "d"
-         #'(lambda nil (interactive) (org-todo "DONE")))
+	 #'(lambda nil (interactive) (org-todo "DONE")))
        (define-key org-todo-state-map "f"
-         #'(lambda nil (interactive) (org-todo "DEFERRED")))
+	 #'(lambda nil (interactive) (org-todo "DEFERRED")))
        (define-key org-todo-state-map "l"
-         #'(lambda nil (interactive) (org-todo "DELEGATED")))
+	 #'(lambda nil (interactive) (org-todo "DELEGATED")))
        (define-key org-todo-state-map "s"
-         #'(lambda nil (interactive) (org-todo "STARTED")))
+	 #'(lambda nil (interactive) (org-todo "STARTED")))
        (define-key org-todo-state-map "w"
-         #'(lambda nil (interactive) (org-todo "WAITING")))))
+	 #'(lambda nil (interactive) (org-todo "WAITING")))))
 
   (setq org-export-copy-to-kill-ring nil)
 #+END_SRC
+
+
 ** Org-mode static site publishing
 *** Research Log Book
 #+BEGIN_SRC emacs-lisp
   (setq org-html-metadata-timestamp-format "%m/%d/%Y"
    org-publish-project-alist
-   '(("rlog-orgfiles"
-      :base-directory "~/research-log/"
-      :base-extension "org"
-      :publishing-directory "~/public/";"/dmb60@grads-bc:/var/phy/web/users/dmb60/public/"
-      :recursive t
-      :publishing-function org-html-publish-to-html
-      :headline-levels 3
-      :auto-preamble t
-      :section-numbers nil
-      :table-of-contents nil
-      :style-include-default nil
-      :html-head "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/style.css\" />"
-      :html-preamble t
-      :html-postamble "<p class=\"postamble\"> Written by: %a. Updated: %T. </p>")
-     ("rlog-images"
-      :base-directory "~/research-log/images/"
-      :base-extension "jpg\\|gif\\|png"
-      :publishing-directory "~/public/images/";"/dmb60@grads-bc:/var/phy/web/users/dmb60/public/images/"
-      :recursive t
-      :publishing-function org-publish-attachment)
-     
-     ("rlog-css"
-      :base-directory "~/research-log/css/"
-      :base-extension "css\\|el"
-      :recursive t
-      :publishing-directory "~/public/";"/dmb60@grads-bc:/var/phy/web/users/dmb60/public/"
-      :publishing-function org-publish-attachment)
-     ("rlog-website" :components ("rlog-orgfiles" "rlog-images" "rlog-other" "rlog-css"))
-     
-     ("thhg-orgfiles"
+   '(("thhg-orgfiles"
       :base-directory "~/hitchhikers-guide-to-hep/"
       :base-extension "org"
       :publishing-directory "~/public/the-guide/"
@@ -1033,34 +807,7 @@ happen.
       :publishing-directory "~/public/the-guide/"
       :publishing-function org-publish-attachment)
      ("thhg-website" :components ("thhg-orgfiles" "thhg-images" "thhg-other" "thhg-css"))
-     ("dbgh-orgfiles"
-      :base-directory "~/dbjergaard.github.io/"
-      :base-extension "org"
-      :publishing-directory "~/dbjergaard.github.io/"
-      :recursive t
-      :publishing-function org-html-publish-to-html
-      :headline-levels 5
-      :auto-preamble t
-      :section-numbers nil
-      :table-of-contents t
-      :style-include-default nil
-      :html-head "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/style.css\" />"
-      :html-preamble t
-      :html-postamble "<p class=\"postamble\"><hr/> Written by: %a. Last updated %d. </p>")
-     ("dbgh-images"
-      :base-directory "~/dbjergaard.github.io/images/"
-      :base-extension "jpg\\|gif\\|png"
-      :publishing-directory "~/dbjergaard.github.io/images/"
-      :recursive t
-      :publishing-function org-publish-attachment)
-     
-     ("dbgh-css"
-      :base-directory "~/dbjergaard.github.io/css/"
-      :base-extension "css\\|el"
-      :recursive t
-      :publishing-directory "~/dbjergaard.github.io/css/"
-      :publishing-function org-publish-attachment)
-     ("dbgh-website" :components ("dbgh-orgfiles" "dbgh-images" "dbgh-other" "dbgh-css"))))
+     ))
 #+END_SRC
 
 ** Babel
@@ -1071,50 +818,30 @@ Active babel langugages
    '((scheme . t)
      (C . t)
      (ruby . t)
-     ;(cpp . t)
+     (python . t)
      (gnuplot .t )
-     (lisp . t)
-     (sh . t)))
+     (lisp . t)))
 #+END_SRC
 ** Interface tweaks
 #+BEGIN_SRC emacs-lisp
-  (setq org-hide-emphasis-markers t)
-  (font-lock-add-keywords 'org-mode
-                          '(("^ +\\([-*]\\) "
-                             (0 (prog1 () (compose-region 
-                                           (match-beginning 1)
-                                           (match-end 1) "•"))))))
-  (use-package org-bullets
-    :ensure t
-    :config (add-hook 'org-mode-hook (lambda () (org-bullets-mode t))))
-
-  (let* ((font '(:font "Source Sans Pro"))
-         (base-font-color     (face-foreground 'default nil 'default))
-         (headline           `(:inherit default :weight bold :foreground ,base-font-color)))
-
-    (custom-theme-set-faces 'user
-                            `(org-level-8 ((t (,@headline ,@font))))
-                            `(org-level-7 ((t (,@headline ,@font))))
-                            `(org-level-6 ((t (,@headline ,@font))))
-                            `(org-level-5 ((t (,@headline ,@font))))
-                            `(org-level-4 ((t (,@headline ,@font :height 1.1))))
-                            `(org-level-3 ((t (,@headline ,@font :height 1.25))))
-                            `(org-level-2 ((t (,@headline ,@font :height 1.5))))
-                            `(org-level-1 ((t (,@headline ,@font :height 1.75))))
-                            `(org-document-title ((t (,@headline ,@font :height 1.5 :underline nil))))))
-#+END_SRC
-* HEP Tools
-#+BEGIN_SRC emacs-lisp
-;; Teach emacs where to find root and friends
-(setenv "LD_LIBRARY_PATH"
-	(concat "/home/dave/root/xrootd-3.2.7/lib:"
-		"/home/dave/root/lib:"
-		(getenv "LD_LIBRARY_PATH")))
-(setenv "PATH"
-	(concat "/home/dave/root/bin:" 
-		(getenv "PATH")))
-  (add-to-list 'load-path "/home/dave/root-oak/")
-  (load-file "/home/dave/hep-toolkit/lab-notebook.el")
+    (font-lock-add-keywords 'org-mode
+			    '(("^ +\\([-*]\\) "
+			       (0 (prog1 () (compose-region 
+					     (match-beginning 1)
+					     (match-end 1) "•"))))))
+    (let* ((font '(:font "Source Sans Pro"))
+	   (base-font-color     (face-foreground 'default nil 'default))
+	   (headline           `(:inherit default :weight bold :foreground ,base-font-color)))
+      (custom-theme-set-faces 'user
+			      `(org-level-8 ((t (,@headline ,@font))))
+			      `(org-level-7 ((t (,@headline ,@font))))
+			      `(org-level-6 ((t (,@headline ,@font))))
+			      `(org-level-5 ((t (,@headline ,@font))))
+			      `(org-level-4 ((t (,@headline ,@font :height 1.1))))
+			      `(org-level-3 ((t (,@headline ,@font :height 1.25))))
+			      `(org-level-2 ((t (,@headline ,@font :height 1.5))))
+			      `(org-level-1 ((t (,@headline ,@font :height 1.75))))
+			      `(org-document-title ((t (,@headline ,@font :height 1.5 :underline nil))))))
 #+END_SRC
 * CD
 #+BEGIN_SRC emacs-lisp

@@ -1,43 +1,62 @@
+
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-color-faces-vector [default bold shadow italic underline bold bold-italic bold])
- '(ansi-color-names-vector (vector "#4d4d4c" "#c82829" "#718c00" "#eab700" "#4271ae" "#8959a8" "#3e999f" "#ffffff"))
- '(compilation-message-face (quote default))
- '(custom-enabled-themes (quote (sanityinc-tomorrow-night)))
- '(custom-safe-themes (quote ("06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default)))
- '(erc-away-nickname "ocmsRzr-AFK")
- '(erc-nick "ocmsRzr")
- '(erc-prompt-for-password t)
- '(fci-rule-color "#efefef")
- '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
- '(highlight-tail-colors (quote (("#eee8d5" . 0) ("#B4C342" . 20) ("#69CABF" . 30) ("#69B7F0" . 50) ("#DEB542" . 60) ("#F2804F" . 70) ("#F771AC" . 85) ("#eee8d5" . 100))))
+ '(ansi-color-faces-vector
+   [default bold shadow italic underline bold bold-italic bold])
+ '(custom-safe-themes
+   '("4c56af497ddf0e30f65a7232a8ee21b3d62a8c332c6b268c81e9ea99b11da0d3" "7366916327c60fdf17b53b4ac7f565866c38e1b4a27345fe7facbf16b7a4e9e8" "b050365105e429cb517d98f9a267d30c89336e36b109a1723d95bc0f7ce8c11d" "ed0b4fc082715fc1d6a547650752cd8ec76c400ef72eb159543db1770a27caa7" "6ac7c0f959f0d7853915012e78ff70150bfbe2a69a1b703c3ac4184f9ae3ae02" "5d1434865473463d79ee0523c1ae60ecb731ab8d134a2e6f25c17a2b497dd459" "261f5ddd72a1c0b47200e13d872075af5f78c3f07d2968bddc0301261934f210" "71f116ced24c4993212d555b477d28500cca2d883781efa8effad812bde6369d" "8022cea21aa4daca569aee5c1b875fbb3f3248a5debc6fc8cf5833f2936fbb22" "246a51f19b632c27d7071877ea99805d4f8131b0ff7acb8a607d4fd1c101e163" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default))
+ '(display-time-default-load-average nil)
+ '(display-time-format "")
+ '(display-time-mode t)
+ '(display-time-use-mail-icon t)
+ '(erc-away-nickname "dmb2-AFK")
+ '(erc-nick "dmb2")
+ '(erc-prompt-for-password nil)
  '(inhibit-startup-screen t)
- '(jabber-alert-presence-hooks nil)
  '(jabber-autoaway-status "Away")
  '(magit-diff-use-overlays nil)
- '(org-agenda-files (quote ("~/.emacs-lisp/init.org" "~/Dropbox/org/2012-12-03-first-post.org" "~/Dropbox/org/notes.org" "~/Dropbox/org/research/fast-jet-substructure-project.org" "~/Dropbox/org/research/jet-charge-in-data.org" "~/Dropbox/org/research/rivet-jet-charge-project.org" "~/Dropbox/org/research/weekly-meetings.org" "~/Dropbox/org/schedule.org" "~/Dropbox/org/school/142-grades.org" "~/Dropbox/org/school/particle-physics.org")))
- '(syslog-debug-face (quote ((t :background unspecified :foreground "#2aa198" :weight bold))))
- '(syslog-error-face (quote ((t :background unspecified :foreground "#dc322f" :weight bold))))
- '(syslog-hour-face (quote ((t :background unspecified :foreground "#859900"))))
- '(syslog-info-face (quote ((t :background unspecified :foreground "#268bd2" :weight bold))))
- '(syslog-ip-face (quote ((t :background unspecified :foreground "#b58900"))))
- '(syslog-su-face (quote ((t :background unspecified :foreground "#d33682"))))
- '(syslog-warn-face (quote ((t :background unspecified :foreground "#cb4b16" :weight bold))))
- '(vc-annotate-background nil)
- '(vc-annotate-color-map (quote ((20 . "#c82829") (40 . "#f5871f") (60 . "#eab700") (80 . "#718c00") (100 . "#3e999f") (120 . "#4271ae") (140 . "#8959a8") (160 . "#c82829") (180 . "#f5871f") (200 . "#eab700") (220 . "#718c00") (240 . "#3e999f") (260 . "#4271ae") (280 . "#8959a8") (300 . "#c82829") (320 . "#f5871f") (340 . "#eab700") (360 . "#718c00"))))
- '(vc-annotate-very-old-color nil)
- '(w3m-follow-redirection 100)
- '(weechat-color-list (quote (unspecified "#002b36" "#073642" "#990A1B" "#dc322f" "#546E00" "#859900" "#7B6000" "#b58900" "#00629D" "#268bd2" "#93115C" "#d33682" "#00736F" "#2aa198" "#839496" "#657b83"))))
+ '(magit-use-overlays nil)
+ '(package-selected-packages
+   '(magit markdown-mode slime hydra sly-asdf sly-repl-ansi-color evil-string-inflection string-inflection gruvbox-theme org-ref evil-lispy lispy eieio web-beautify twittering-mode smex shell-switcher scratch robe rect-mark parsebib paredit paradox org-bullets notify names key-chord jabber goto-last-change flycheck f evil-tutor evil-surround evil-smartparens evil-numbers evil-nerd-commenter evil-magit evil-leader evil-ediff evil-commentary emojify emms-player-mpv drag-stuff company c-eldoc biblio bbdb))
+ '(paradox-automatically-star nil)
+ '(safe-local-variable-values
+   '((Lowercase . T)
+     (Base . 10)
+     (Syntax . COMMON-LISP)
+     (Package . XLIB)
+     (Syntax . Common-Lisp)))
+ '(send-mail-function 'mailclient-send-it)
+ '(sp-base-key-bindings 'sp)
+ '(syslog-debug-face
+   '((t :background unspecified :foreground "#2aa198" :weight bold)))
+ '(syslog-error-face
+   '((t :background unspecified :foreground "#dc322f" :weight bold)))
+ '(syslog-hour-face '((t :background unspecified :foreground "#859900")))
+ '(syslog-info-face
+   '((t :background unspecified :foreground "#268bd2" :weight bold)))
+ '(syslog-ip-face '((t :background unspecified :foreground "#b58900")))
+ '(syslog-su-face '((t :background unspecified :foreground "#d33682")))
+ '(syslog-warn-face
+   '((t :background unspecified :foreground "#cb4b16" :weight bold)))
+ '(w3m-follow-redirection 100))
  
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(variable-pitch ((t (:height 1.5 :family "Calluna")))))
+ '(italic ((t (:slant italic))))
+ '(tex-verbatim ((t nil)))
+ '(variable-pitch ((t (:height 1.3 :family "Crimson")))))
 
 ;; Custom elisp code
 (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
@@ -58,3 +77,5 @@
 (put 'set-goal-column 'disabled nil)
 (put 'upcase-region 'disabled nil)
 (put 'narrow-to-page 'disabled nil)
+
+(put 'downcase-region 'disabled nil)

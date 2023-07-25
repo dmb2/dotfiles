@@ -1,15 +1,15 @@
 if [ $TERM == "dumb" ]; then
     export TERM=rxvt
-else 
-    [ -f ~/root/bin/thisroot.sh ] && source ~/root/bin/thisroot.sh
-    [ -f ~/root-clang/bin/thisroot.sh ] && source ~/root-clang/bin/thisroot.sh
+else
+    function load_file {
+	[ -f $1 ] && source $1
+    }
+    load_file /etc/profile.d/grc.bashrc
+
     # don't put duplicate lines in the history. See bash(1) for more options
     export HISTCONTROL=ignoredups
-    # ... and ignore same sucessive entries.
     export HISTCONTROL=ignoreboth
-    # save a reasonable number of commands
     export HISTFILESIZE=2000
-    # save timestamp for each command
     export HISTTIMEFORMAT="%F %T "
     shopt -s histappend
     shopt -s histreedit
@@ -22,10 +22,7 @@ else
     # make less more friendly for non-text input files, see lesspipe(1)
     [ -x /usr/bin/lesspipe ] && eval "$(lesspipe)"
 
-    # add maple to path
-    [ -d /home/dave/maple17 ] && export PATH=/home/dave/maple17/bin:$PATH
-
-    [ -f /etc/bash_completion ] && source /etc/bash_completion
+    [ -d ${HOME}/.roswell ] && export PATH=${HOME}/.roswell/bin:$PATH
     
     # set variable identifying the chroot you work in (used in the prompt below)
     if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
@@ -127,56 +124,77 @@ else
     bash_prompt
     unset bash_prompt
 
-    if [ -f /etc/bash_completion ]; then
-	. /etc/bash_completion
+    # enable bash completion in interactive shells
+    if ! shopt -oq posix; then
+     if [ -f /usr/share/bash-completion/bash_completion ]; then
+       . /usr/share/bash-completion/bash_completion
+     elif [ -f /etc/bash_completion ]; then
+       . /etc/bash_completion
+     fi
     fi
     complete -cf sudo
 
-    eval `dircolors -b ~/.dircolors-solarized-ansi-universal`
-    source .git-completion.sh
-    alias ls='ls --color=auto'
-    alias ll='ls -lah'
-    alias dir='ls --color=auto --format=vertical'
-    alias vi=vim
-    if [ -f /usr/share/vim/vim73/macros/less.sh ]; then
-	alias less='/usr/share/vim/vim73/macros/less.sh'
-    elif [ -f /usr/share/vim/vim70/macros/less.sh ]; then
-	alias less='/usr/share/vim/vim70/macros/less.sh'
-    elif [ -f /usr/share/vim/vim72/macros/less.sh ]; then
-	alias less='/usr/share/vim/vim72/macros/less.sh'
-    fi
+    # Dircolors so ls can color based on file type using magic bytes
+    eval `dircolors -b ~/dotfiles/dircolors`
+    # Colors for utilities that support them
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
+    # Sets up vim to be a lesspipe if the script is found
+    less_sh=$(find /usr/share/vim/ -name 'less.sh')
+    HL=$(which highlight)
+    if [ -n "$HL" ]; then
+	export LESSOPEN="| /usr/bin/highlight %s --out-format xterm256 --force"
+    elif [ -f "$less_sh" ]; then
+	alias less="$less_sh"
+    fi
 
-    export LESS_TERMCAP_mb=$'\E[01;31m'
-    export LESS_TERMCAP_md=$'\E[01;31m'
-    export LESS_TERMCAP_me=$'\E[0m'
-    export LESS_TERMCAP_se=$'\E[0m'                           
-    export LESS_TERMCAP_so=$'\E[01;44;33m'                                 
-    export LESS_TERMCAP_ue=$'\E[0m'
-    export LESS_TERMCAP_us=$'\E[01;32m'
+    alias ls='ls --color=auto'
+    alias sl='ls --color=auto'
+    alias diff='diff --color=auto'
 
-    export PATH=${HOME}/local/bin:$PATH:/sbin
+    # set up colors for man pages
+    export LESS_TERMCAP_mb=$(tput bold; tput setaf 2) # green
+    export LESS_TERMCAP_md=$(tput bold; tput setaf 6) # cyan
+    export LESS_TERMCAP_me=$(tput sgr0)
+    export LESS_TERMCAP_so=$(tput bold; tput setaf 3; tput setab 4) # yellow on blue
+    export LESS_TERMCAP_se=$(tput rmso; tput sgr0)
+    export LESS_TERMCAP_us=$(tput smul; tput bold; tput setaf 7) # white
+    export LESS_TERMCAP_ue=$(tput rmul; tput sgr0)
+    export LESS_TERMCAP_mr=$(tput rev)
+    export LESS_TERMCAP_mh=$(tput dim)
+    export LESS_TERMCAP_ZN=$(tput ssubm)
+    export LESS_TERMCAP_ZV=$(tput rsubm)
+    export LESS_TERMCAP_ZO=$(tput ssupm)
+    export LESS_TERMCAP_ZW=$(tput rsupm)
+    export GROFF_NO_SGR=1         # For Konsole and Gnome-terminal
+    # Get color support for 'less'
+    export LESS="--RAW-CONTROL-CHARS"
+
+
+    alias ll='ls -lah'
+    alias vi=vim
+    alias pip='pip3'
+    load_file $HOME/.git-completion.sh
+    load_file $HOME/.aliases
+    load_file $HOME/.rvm/scripts/rvm
+    export MANPATH=${HOME}/local/share/man:$MANPATH
+
     if [ TERM=="rxvt-unicode" ]; then
 	export TERM="rxvt"
     fi
 
-    export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
-    #export ATLAS_LOCAL_ROOT_BASE=/share/atlas/ATLASLocalRootBase
-    alias setupATLAS='source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh'
-    alias setupBFrame='source ~/bFrame/external/setup.sh'
-    
-    export SVNOFF=svn+ssh://svn.cern.ch/reps/atlasoff
-    export SVNGRP=svn+ssh://svn.cern.ch/reps/atlasgrp
-    export SVNGROUPS=svn+ssh://svn.cern.ch/reps/atlasgroups
-    export SVNPHYS=svn+ssh://svn.cern.ch/reps/atlasphys
-    export SVNPERF=svn+ssh://svn.cern.ch/reps/atlasperf
-    export SVNINST=svn+ssh://svn.cern.ch/reps/atlasinst
-    export SVNUSR=svn+ssh://svn.cern.ch/reps/atlasusr
-    export SVNROOT=svn+ssh://svn.cern.ch/reps/atlasoff
-    # the editor of the beast, know thine enemy
-    export SVN_EDITOR=vim
+    export TEXINPUTS=$HOME/local/share/texmf/tex/latex/misc/:$TEXINPUTS
+
+    view-plots(){
+	local today; local plots
+	today=$(date +%m_%d_%y)
+	[ -f ./${today}_plots.pdf ] && rm ${today}_plots.pdf; 
+	files=$(echo $@  | tr ' ' '\n' | grep -v "_plots.pdf" | tr '\n' ' ')
+	pdftk ${files} cat output ${today}_plots.pdf;
+	[ -f ./${today}_plots.pdf ] && evince ${today}_plots.pdf;
+    }    
+
     # Auto-screen invocation. see: http://taint.org/wk/RemoteLoginAutoScreen
     # if we're coming from a remote SSH connection, in an interactive session
     # then automatically put us into a screen(1) session.   Only try once
@@ -193,3 +211,10 @@ else
     fi
 fi
 # [end of auto-screen snippet]
+export PATH=$HOME/.local/bin:$PATH
+# export SBCL_HOME=$HOME/.local/lib/sbcl
+export PYTHONPATH=$HOME/.local
+export MANPATH=$MANPATH:$HOME/.local/share/man
+export GENDEV=${HOME}/gendev/build
+export EDITOR=vim
+export PATH="$HOME/.local/node-v12.16.3-linux-x64/bin:$PATH"
