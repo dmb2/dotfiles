@@ -8,15 +8,25 @@
 (setq *startup-message* nil)
 
 ;;This is the solarized-dark theme from emacs/Ethan Schoonover
-(set '*colors* '("#073642"; "black"
-		 "#dc322f"; "red"
-		 "#859900"; "green"
-		 "#b58900"; "yellow"
-		 "#268bd2"; "blue"
-		 "#d33682"; "magenta"
-		 "#2aa198"; "cyan"
-		 "#eee8d5")); "white"
-
+;; solarized
+(set '*colors* '("#100F0F"; "black"
+		 "#AF3029"; "red"
+		 "#66800B"; "green"
+		 "#AD8301"; "yellow"
+		 "#205EA6"; "blue"
+		 "#A02F6F"; "magenta"
+		 "#24837B"; "cyan"
+		 "#FFFCF0")); "white"
+ 
+;; (set '*colors* '("#073642"; "black"
+;;		 "#dc322f"; "red"
+;;		 "#859900"; "green"
+;;		 "#b58900"; "yellow"
+;;		 "#268bd2"; "blue"
+;;		 "#d33682"; "magenta"
+;;		 "#2aa198"; "cyan"
+;;		 "#eee8d5")); "white"
+;gruvbox
 ;; (set '*colors* '("#282828" ; black
 ;; 		 "#fb4934" ; red
 ;; 		 "#b8bb26"
@@ -26,14 +36,15 @@
 ;; 		 "#8ec07c"
 ;; 		 "#ebdbb2"))
 
-(update-color-map (current-screen))
-(setf *mode-line-foreground-color* "#eee8d5")
-(setf *mode-line-background-color* "#073642")
-(setf *mode-line-border-color*     "#eee8d5")
+(setf *mode-line-foreground-color* (nth 7 *colors*))
+(setf *mode-line-background-color* (nth 0 *colors*))
+(setf *mode-line-border-color*     (nth 7 *colors*))
 
-(set-fg-color "#eee8d5")
-(set-bg-color "#073642")
-(set-border-color "#eee8d5")
+(set-fg-color (nth 7 *colors*))
+(set-bg-color (nth 0 *colors*))
+(set-border-color (nth 7 *colors*))
+
+(update-color-map (current-screen))
 
 (load-module "end-session")
 ;(load-module "ft2-fonts")

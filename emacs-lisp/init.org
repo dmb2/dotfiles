@@ -535,21 +535,26 @@ Load slime for clisp hacking
 * Misc
 ** Color Theme
 #+BEGIN_SRC emacs-lisp
-  (setq current-theme 'solarized-dark)
-  (setq dark-theme 'solarized-dark)
+  (add-to-list 'custom-theme-load-path "~/.emacs-lisp/flexoki-theme/" )
+  (add-to-list 'load-path "~/.emacs-lisp/flexoki-theme/")
+  (setq current-theme 'flexoki-dark)
+  (setq dark-theme 'flexoki-dark)
   (setq light-theme 'solarized-light)
 
   (load-theme current-theme t)
   (defun toggle-themes ()
     (interactive)
     (cond ((eq current-theme light-theme) 
-           (setq current-theme dark-theme)
-           (shell-command "xrdb -load ~/.Xresources-dark"))
-          ((eq current-theme dark-theme)
-           (setq current-theme light-theme)
-           (shell-command "xrdb -load ~/.Xresources-light")))
+	   (setq current-theme dark-theme)
+	   (shell-command "xrdb -load ~/dotfiles/Xresources-dark"))
+	  ((eq current-theme dark-theme)
+	   (setq current-theme light-theme)
+	   (shell-command "xrdb -load ~/dotfiles/Xresources-light")))
     (load-theme current-theme))
 #+END_SRC
+
+#+RESULTS:
+: toggle-themes
 
 ** Default font
 #+BEGIN_SRC emacs-lisp

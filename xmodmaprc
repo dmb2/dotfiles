@@ -1,12 +1,17 @@
-!
-! Swap Caps_Lock and Control_L
-!
+! escape -> escape, shift-escape -> ~
+keycode   9 = Escape asciitilde grave grave grave grave
+
+! caps -> alt, ctrl -> ctrl, alt->ctrl
+! Remove Capslock, Ctrl, and Mod1,
 remove Lock = Caps_Lock
 remove Control = Control_L
 remove Mod1 = Alt_L
+! assign the key Caps to left meta
 keysym Caps_Lock = Alt_L
+! assign the key Alt to left ctrl
 keysym Alt_L = Control_L
 
+! restore control and mod with new assignments
 add Control = Control_L
 add Mod1 = Alt_L
 add Lock = Caps_Lock
