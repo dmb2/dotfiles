@@ -7,5 +7,4 @@ XTerm.vt100.metaSendsEscape: true
 
 XTerm*saveLines: 4096
 
-XTerm*faceName: Fira Mono
-XTerm*faceSize: 14
+XTerm*faceSize:14

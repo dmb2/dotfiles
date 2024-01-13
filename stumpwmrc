@@ -7,7 +7,7 @@
 (in-package :stumpwm)
 (setq *startup-message* nil)
 
-;;This is the solarized-dark theme from emacs/Ethan Schoonover
+;;This is the flexoki theme 
 ;; solarized
 (set '*colors* '("#100F0F"; "black"
 		 "#AF3029"; "red"
@@ -58,6 +58,15 @@
 (define-key *top-map* (kbd "C-)")  "volume-up")
 (define-key *top-map* (kbd "C-*")  "volume-toggle-mute")
 
+(define-key *root-map* (kbd "C-l") "move-window right")
+(define-key *root-map* (kbd "C-h") "move-window left")
+(define-key *root-map* (kbd "C-j") "move-window up")
+(define-key *root-map* (kbd "C-k") "move-window down")
+(define-key *root-map* (kbd "l") "move-focus right")
+(define-key *root-map* (kbd "h") "move-focus left")
+(define-key *root-map* (kbd "j") "move-focus up")
+(define-key *root-map* (kbd "K") "move-focus up")
+
 (load-module "stump-backlight")
 (setq stump-backlight::*use-clx-randr* nil)
 
@@ -75,24 +84,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Default programs for various functions
 
-(defun directory-pathname (p)
-  (make-pathname :name nil :type nil :version nil
-		 :defaults (pathname p)))
-(defconstant +wild-file+
-  (make-pathname :name ':wild
-		 :type ':wild
-		 :version ':wild))
-(defun wild-directory (d)
-  (merge-pathnames +wild-file+ (directory-pathname d)))
-
-
-
 (defun cat (&rest strings) "Concatenates strings, like the Unix command 'cat'. A shortcut for (concatenate 'string foo bar)."
   (apply 'concatenate 'string strings))
 
-(defparameter *wallpaper* "~/Pictures/wallhaven-x6zjez.jpg")
+(defparameter *wallpaper* "~/Pictures/halflife.jpg")
 
-(defparameter X-TERM "exec xterm"
+(defparameter X-TERM "exec xterm -fa \"Berkeley Mono\" "
 "X-TERM command definition so we can launch a terminal emulator")
 ;"exec emacsclient -c -e '(shell-switcher-new-shell)'" 
 
@@ -200,7 +197,6 @@ mode-line"
 (run-shell-command "synclient tapbutton2=3")
 ; Three finger tap sends button 2 AKA middle click
 (run-shell-command "synclient tapbutton3=2")
-(run-shell-command "nm-applet")
 
 ;(setq *debug-level* 100)
 ;(redirect-all-output (data-dir-file "debug-output"))
