@@ -61,5 +61,11 @@
 *color15:                 S_base3
 
 
-XTerm*font:                  xft:Fira Mono:size=14:antialias=true:hinting=true
+XTerm*renderFont: true
+XTerm*antialias: true
+XTerm*hinting: true
+XTerm*faceName: Fira Code
+XTerm*faceSize: 14
+
 XTerm*metaSendsEscape: true
+XTerm*saveLines: 100000

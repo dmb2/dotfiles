@@ -47,8 +47,6 @@
 (define-key *top-map* (kbd "C-)")  "volume-up")
 (define-key *top-map* (kbd "C-*")  "volume-toggle-mute")
 
-(load-module "stump-backlight")
-(setq stump-backlight::*use-clx-randr* nil)
 
 (mapc (lambda (head)
 	(toggle-mode-line (current-screen) head)) 
@@ -64,22 +62,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Default programs for various functions
 
-(defun directory-pathname (p)
-  (make-pathname :name nil :type nil :version nil
-		 :defaults (pathname p)))
-(defconstant +wild-file+
-  (make-pathname :name ':wild
-		 :type ':wild
-		 :version ':wild))
-(defun wild-directory (d)
-  (merge-pathnames +wild-file+ (directory-pathname d)))
-
-
 
 (defun cat (&rest strings) "Concatenates strings, like the Unix command 'cat'. A shortcut for (concatenate 'string foo bar)."
   (apply 'concatenate 'string strings))
 
-(defparameter *wallpaper* "~/Pictures/wallhaven-x6zjez.jpg")
+(defparameter *wallpaper* "$(ls wallpaper/* | sort -R | head -n 1)")
 
 (defparameter X-TERM "exec xterm"
 "X-TERM command definition so we can launch a terminal emulator")
@@ -134,7 +121,6 @@
        while pos)))
 
 
-
 (define-key *root-map* (kbd "Print")
   "exec import -window root png:$HOME/screenshot_$(date +%F_%H-%M-%S).png")
 
@@ -159,8 +145,8 @@ mode-line"
 (set-prefix-key (kbd "C-q"))
 
 ;; Lock the screen
-(define-key *top-map* (kbd "C-M-Escape") "exec gnome-screensaver-command -l")
-(define-key *top-map* (kbd "s-l") "exec gnome-screensaver-command -l")
+(define-key *top-map* (kbd "C-M-Escape") "exec xscreensaver-command -lock")
+(define-key *top-map* (kbd "s-l") "exec xscreensaver-command -lock")
 
 (define-key *root-map* (kbd "c") X-TERM)
 (define-key *root-map* (kbd "C-c") X-TERM) 
@@ -183,6 +169,7 @@ mode-line"
 (set-wallpaper *wallpaper*)
 
 (run-shell-command "emacs --daemon")
+(run-shell-command "xscreensaver --no-splash")
 ; One finger tap sends button 1 AKA left click
 (run-shell-command "synclient tapbutton1=1")
 ; Two finger tap sends button 3 AKA right click
@@ -193,5 +180,5 @@ mode-line"
 
 ;(setq *debug-level* 100)
 ;(redirect-all-output (data-dir-file "debug-output"))
-(require 'swank)
-(swank:create-server)
+;(require 'swank)
+;(swank:create-server)

@@ -9,7 +9,8 @@ else
     # don't put duplicate lines in the history. See bash(1) for more options
     export HISTCONTROL=ignoredups
     export HISTCONTROL=ignoreboth
-    export HISTFILESIZE=2000
+    export HISTFILESIZE=2000000
+    export HISTSIZE=-1
     export HISTTIMEFORMAT="%F %T "
     shopt -s histappend
     shopt -s histreedit
@@ -218,3 +219,4 @@ export MANPATH=$MANPATH:$HOME/.local/share/man
 export GENDEV=${HOME}/gendev/build
 export EDITOR=vim
 export PATH="$HOME/.local/node-v12.16.3-linux-x64/bin:$PATH"
+. "$HOME/.cargo/env"
