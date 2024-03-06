@@ -1,7 +1,8 @@
-! Solarized color scheme for the X Window System
-!
-! http://ethanschoonover.com/solarized
+#include "Xresources.d/flexoki-dark"
+!#include "Xresources.d/flexoki-light"
+#include "Xresources.d/xterm"
 
+<<<<<<< HEAD
 ! Common
 #define S_yellow        #b58900
 #define S_orange        #cb4b16
@@ -69,3 +70,5 @@ XTerm*faceSize: 14
 
 XTerm*metaSendsEscape: true
 XTerm*saveLines: 100000
+=======
+>>>>>>> b0af98953d1ae1dc32b3dae59a367200665d929a

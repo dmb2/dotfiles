@@ -1,0 +1,4 @@
+#include "Xresources.d/flexoki-dark"
+!#include "Xresources.d/flexoki-light"
+#include "Xresources.d/xterm"
+

@@ -39,6 +39,13 @@ Compile files that have already been compiled before.
       '(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'" "/tmp/\\2" t)
 	("\\`/?\\([^/]*/\\)*\\([^/]*\\)\\'" "~/.emacs.d/auto-save/" t)))
 #+END_SRC
+** ERC
+#+begin_src emacs-lisp
+  (defun erc-libera ()
+    (interactive)
+    (erc :server "irc.libera.chat"
+	 :port "6697"))
+#+end_src
 ** Email
 #+BEGIN_SRC emacs-lisp
 (setq mail-user-agent 'gnus-user-agent)
@@ -77,6 +84,7 @@ Make sentences end with one space instead of two spaces
     (define-key evil-normal-state-map (kbd "C-j") #'evil-scroll-down)
     (define-key evil-normal-state-map (kbd "M-.") nil)
     (define-key evil-normal-state-map (kbd "M-,") nil)
+    (evil-define-key normal org-mode (kbd "<tab>") #'org-cycle)
     (setq evil-undo-system 'undo-redo)
     (mapc (lambda (mode-map)
 	    (evil-add-hjkl-bindings mode-map 'emacs)) 
@@ -505,39 +513,41 @@ Load slime for clisp hacking
 (add-hook 'inferior-lisp-mode-hook (lambda () (inferior-slime-mode t)))
 (slime-setup '(slime-fancy)) ; almost everything
 #+END_SRC
+** CLHS
+#+BEGIN_SRC emacs lisp
+  (add-to-list 'load-path "~/.emacs-lisp/gcl-info")
+  (require 'get-gcl-info)
+#+END_SRC
 * Misc
 ** Color Theme
 #+BEGIN_SRC emacs-lisp
-  (setq current-theme 'solarized-dark)
-  (setq dark-theme 'solarized-dark)
-  (setq light-theme 'solarized-light)
+  (use-package flexoki-themes
+    :ensure t  ;; or :straight t if using straight.el
+    :config (load-theme 'flexoki-themes-dark t))
+
+  (setq current-theme 'flexoki-themes-dark)
+  (setq dark-theme 'flexoki-themes-dark)
+  (setq light-theme 'flexoki-themes-light)
 
   (load-theme current-theme t)
   (defun toggle-themes ()
     (interactive)
     (cond ((eq current-theme light-theme) 
-           (setq current-theme dark-theme)
-           (shell-command "xrdb -load ~/.Xresources-dark"))
-          ((eq current-theme dark-theme)
-           (setq current-theme light-theme)
-           (shell-command "xrdb -load ~/.Xresources-light")))
+	   (setq current-theme dark-theme)
+	   (shell-command "xrdb -load ~/dotfiles/Xresources-dark"))
+	  ((eq current-theme dark-theme)
+	   (setq current-theme light-theme)
+	   (shell-command "xrdb -load ~/dotfiles/Xresources-light")))
     (load-theme current-theme))
 #+END_SRC
+
+#+RESULTS:
+: toggle-themes
 
 ** Default font
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'default-frame-alist '(font . "Fira Code-12"))
-#+END_SRC
-** Font tweaks
-More readable fonts for non-programming modes
-#+BEGIN_SRC emacs-lisp
-(dolist (hook '(erc-mode-hook
-		;LaTeX-mode-hook
-		Info-mode-hook
-		edit-server-start-hook
-		markdown-mode-hook
-		w3m-mode))
-  (add-hook hook (lambda () (variable-pitch-mode t) )))
+;(add-to-list 'default-frame-alist '(font . "Berkeley Mono-12"))
 #+END_SRC
 ** Diary
 #+BEGIN_SRC emacs-lisp
@@ -794,6 +804,27 @@ Active babel langugages
      (python . t)
      (gnuplot .t )
      (lisp . t)))
+#+END_SRC
+** Interface tweaks
+#+BEGIN_SRC emacs-lisp
+    (font-lock-add-keywords 'org-mode
+			    '(("^ +\\([-*]\\) "
+			       (0 (prog1 () (compose-region 
+					     (match-beginning 1)
+					     (match-end 1) "•"))))))
+    (let* (
+	   (base-font-color     (face-foreground 'default nil 'default))
+	   (headline           `(:inherit default :weight bold :foreground ,base-font-color)))
+      (custom-theme-set-faces 'user
+			      `(org-level-8 ((t (,@headline ))))
+			      `(org-level-7 ((t (,@headline ))))
+			      `(org-level-6 ((t (,@headline ))))
+			      `(org-level-5 ((t (,@headline ))))
+			      `(org-level-4 ((t (,@headline  :height 1.1))))
+			      `(org-level-3 ((t (,@headline  :height 1.25))))
+			      `(org-level-2 ((t (,@headline  :height 1.5))))
+			      `(org-level-1 ((t (,@headline  :height 1.75))))
+			      `(org-document-title ((t (,@headline :height 1.5 :underline nil))))))
 #+END_SRC
 * CD
 #+BEGIN_SRC emacs-lisp
