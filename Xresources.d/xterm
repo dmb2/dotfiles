@@ -5,6 +5,8 @@ XTerm.vt100.locale: false
 
 XTerm.vt100.metaSendsEscape: true
 
+XTerm*scrollBar: false
+
 XTerm*saveLines: 4096
 
 XTerm*faceSize:14

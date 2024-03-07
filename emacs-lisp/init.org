@@ -84,8 +84,13 @@ Make sentences end with one space instead of two spaces
     (define-key evil-normal-state-map (kbd "C-j") #'evil-scroll-down)
     (define-key evil-normal-state-map (kbd "M-.") nil)
     (define-key evil-normal-state-map (kbd "M-,") nil)
-    (evil-define-key normal org-mode (kbd "<tab>") #'org-cycle)
+    (evil-define-key 'normal org-mode (kbd "<tab>") #'org-cycle)
+    (evil-define-key 'normal ednc-view-mode-map (kbd "<tab>") #'ednc-toggle-expanded-view)
+    (evil-define-key 'normal ednc-view-mode-map (kbd "d") #'ednc-dismiss-notifications)
+    (evil-define-key 'normal ednc-view-mode-map (kbd "<mouse-1>") #'ednc-invoke-action)
+    (evil-define-key 'normal ednc-view-mode-map (kbd "<ret>") #'ednc-invoke-action)
     (setq evil-undo-system 'undo-redo)
+
     (mapc (lambda (mode-map)
 	    (evil-add-hjkl-bindings mode-map 'emacs)) 
 	  '(ibuffer-mode-map
@@ -118,6 +123,12 @@ Make sentences end with one space instead of two spaces
 	  (backward-char)
 	  (decf count))))
     (define-key evil-operator-state-map (kbd "lw") #'evil-little-word))
+  (use-package evil-collection
+    :after evil
+    :ensure t
+    :config
+    (remove 'info evil-collection-mode-list)
+    (evil-collection-init))
   (use-package evil-surround
     :ensure t
     :config (global-evil-surround-mode 1))
@@ -135,7 +146,8 @@ Make sentences end with one space instead of two spaces
     :config (evil-commentary-mode))
   (use-package evil-tutor
     :ensure t)
-
+  (use-package evil-ediff
+    :ensure t)
 
 #+END_SRC
 *** Dired customizations
@@ -146,28 +158,36 @@ Make sentences end with one space instead of two spaces
     (interactive)
     (message "Slurped %s " (kill-new (dired-get-filename))))
   (add-hook 'dired-load-hook
-            (lambda ()
-              (load "dired-x")
-              ;; Set dired-x global variables here.  For example:
-              ))
+	    (lambda ()
+	      (load "dired-x")
+	      ;; Set dired-x global variables here.  For example:
+	      ))
   (add-hook 'dired-mode-hook
-            (lambda ()
-              ;; Set dired-x buffer-local variables here.  For example:
-              (define-key dired-mode-map "c" 'dired-copy-filename)))
+	    (lambda ()
+	      ;; Set dired-x buffer-local variables here.  For example:
+	      (define-key dired-mode-map "c" 'dired-copy-filename)))
   (setq dired-guess-shell-alist-user '(("\\.djvu$" "xpdf")
-                                       ("\\.pdf$" "xpdf")
-                                       ("\\.ps$" "xpdf"))
-        dired-listing-switches "-alh"
-        dired-omit-files "^\\.?#\\|^\\.?~\\|^\\.[A-Za-z0-9]"
-        dired-recursive-copies 'always
-        dired-recursive-deletes 'top
-        dired-dwim-target t
-        global-auto-revert-non-file-buffers t
-        auto-revert-verbose nil)
+				       ("\\.pdf$" "xpdf")
+				       ("\\.ps$" "xpdf")
+				       ("\\.odt$" "soffice")
+				       ("\\.odp$" "soffice")
+				       ("\\.doc$" "soffice")
+				       ("\\.docx$" "soffice")
+				       ("\\.ppt$" "soffice")
+				       ("\\.pptx$" "soffice"))
+	dired-listing-switches "-alh"
+	dired-omit-files "^\\.?#\\|^\\.?~\\|^\\.[A-Za-z0-9]"
+	dired-recursive-copies 'always
+	dired-recursive-deletes 'top
+	dired-dwim-target t
+	global-auto-revert-non-file-buffers t
+	auto-revert-verbose nil)
 #+END_SRC
-*** Disable Scroll Bar
+*** Disable UI elements
 #+BEGIN_SRC emacs-lisp
   (scroll-bar-mode -1)
+  (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+  (when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 #+END_SRC
 *** Hi-line mode
 #+BEGIN_SRC emacs-lisp
@@ -180,13 +200,8 @@ Make sentences end with one space instead of two spaces
   (global-set-key "\C-x\C-k" #'kill-region)
   (global-set-key "\C-c\C-k" #'kill-region)
 
-  (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-  (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
   (global-set-key (kbd "C-M-=") #'indent-region)
-  (global-set-key (kbd "M-j")
-                  (lambda ()
-                    (interactive)
-                    (join-line -1)))
+  (global-set-key (kbd "M-j") (lambda () (interactive) (join-line -1)))
 #+END_SRC
 *** Toggle-Map
 [[http://endlessparentheses.com/the-toggle-map-and-wizardry.html][Taken from here]]
@@ -273,8 +288,7 @@ Turn on the infamous ibuffer mode
                       (filename . "*.org")))
            ("LaTeX" (or (mode . LaTeX-mode)
                         (mode . latex-mode)))
-           ("C Family" (or (filename . "code")
-                           (mode . c-mode)
+           ("C Family" (or (mode . c-mode)
                            (mode . c++-mode)))
            ("XML" (or (filename . "xml")
                       (mode . nXML)))
@@ -345,14 +359,15 @@ This works fairly well, its very minimal. The only thing "missing" is
 the vc status which I can't quite get right.
 #+BEGIN_SRC emacs-lisp
   (setq-default mode-line-format
-        (list
-         " " mode-line-modified
-         " %[" mode-line-buffer-identification " %l%] %6 "
-         mode-line-misc-info
-         mode-line-end-spaces))
-  (setq global-mode-string '((t jabber-activity-mode-string)
-                            ;evil-mode-line-tag
-                            "" display-time-string appt-mode-string)) ;
+	(list
+	 " " mode-line-modified
+	 " %[" mode-line-buffer-identification " %l%] %6 "
+	 mode-line-misc-info
+	 mode-line-end-spaces))
+  (setq global-mode-string '("" (vc-mode vc-mode)
+			     evil-mode-line-tag
+			     display-time-string
+			     appt-mode-string))
 #+END_SRC
 *** Custom scratch message
 #+BEGIN_SRC emacs-lisp
@@ -471,6 +486,10 @@ anyway.
 (when (functionp #'x-cut-buffer-or-selection-value)
     (setq interprogram-paste-function #'x-cut-buffer-or-selection-value))
 #+END_SRC
+*** Compilation Mode
+#+begin_src emacs-lisp
+  (setq compilation-scroll-output 'first-error)
+#+end_src
 
 ** Comments
 #+BEGIN_SRC emacs-lisp
@@ -485,18 +504,26 @@ anyway.
 ** Delimiters (parens and family)
 *** Smartparens
 #+BEGIN_SRC emacs-lisp
-    (use-package smartparens
-      :ensure t
-      :config 
-      (smartparens-global-mode t)
-      (show-smartparens-global-mode t)
-      (require 'smartparens-config)
-      (require 'smartparens-ruby)
-      (sp-with-modes '(rhtml-mode)
-        (sp-local-pair "<" ">")
-        (sp-local-pair "<%" "%>"))
-      (sp-with-modes '(org-mode)
-        (sp-local-pair "$" "$")))
+  (use-package smartparens
+    :ensure t
+    :config 
+    (smartparens-global-mode t)
+    (show-smartparens-global-mode t)
+    (require 'smartparens-config)
+    (require 'smartparens-ruby)
+    (sp-with-modes '(rhtml-mode)
+      (sp-local-pair "<" ">")
+      (sp-local-pair "<%" "%>"))
+    (sp-with-modes '(org-mode)
+      (sp-local-pair "$" "$"))
+    (mapc (lambda (mode)
+	    (add-hook mode (lambda ()
+			     (setq sp-pair-list
+				   (remove '("'" . "'") sp-pair-list)))))
+	  '(Latex-mode-hook
+	    org-mode-hook
+	    tex-mode-hook
+	    text-mode-hook)))
 #+END_SRC
 
 ** SLIME
@@ -540,9 +567,6 @@ Load slime for clisp hacking
 	   (shell-command "xrdb -load ~/dotfiles/Xresources-light")))
     (load-theme current-theme))
 #+END_SRC
-
-#+RESULTS:
-: toggle-themes
 
 ** Default font
 #+BEGIN_SRC emacs-lisp
@@ -633,6 +657,7 @@ prepended to the element after the #+HEADER: tag."
 ** Info tweaks
 #+BEGIN_SRC emacs-lisp 
   (add-to-list 'Info-directory-list "~/local/share/info")
+  (add-to-list 'Info-directory-list "~/.local/share/info")
 #+END_SRC
 ** Calc Tweaks
 #+BEGIN_SRC emacs-lisp
@@ -704,9 +729,10 @@ Set appropriate variables for appointment pop-ups 5mins before they
 happen.
 #+BEGIN_SRC emacs-lisp
   (setq appt-message-warning-time 5
-        appt-display-mode-line t
-        appt-display-format 'window)
+	appt-display-mode-line t
+	appt-display-format 'window)
   (appt-activate 1)
+  (add-hook 'org-finalize-agenda-hook 'org-agenda-to-appt)
 #+END_SRC
 ** Misc Org Inits
 #+BEGIN_SRC emacs-lisp
@@ -721,7 +747,9 @@ happen.
 
 
   (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-  (setq help-at-pt-display-when-idle 't)
+  (setq help-at-pt-display-when-idle t
+	org-export-copy-to-kill-ring nil
+	org-export-allow-bind-keywords t)
 
   (global-set-key "\C-cl" 'org-store-link)
   (global-set-key "\C-ca" 'org-agenda)
@@ -753,7 +781,6 @@ happen.
        (define-key org-todo-state-map "w"
 	 #'(lambda nil (interactive) (org-todo "WAITING")))))
 
-  (setq org-export-copy-to-kill-ring nil)
 #+END_SRC
 
 

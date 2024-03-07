@@ -58,8 +58,6 @@
 (define-key *top-map* (kbd "C-)")  "volume-up")
 (define-key *top-map* (kbd "C-*")  "volume-toggle-mute")
 
-<<<<<<< HEAD
-=======
 (define-key *root-map* (kbd "C-l") "move-window right")
 (define-key *root-map* (kbd "C-h") "move-window left")
 (define-key *root-map* (kbd "C-j") "move-window up")
@@ -71,7 +69,6 @@
 
 (load-module "stump-backlight")
 (setq stump-backlight::*use-clx-randr* nil)
->>>>>>> b0af98953d1ae1dc32b3dae59a367200665d929a
 
 (mapc (lambda (head)
 	(toggle-mode-line (current-screen) head)) 
