@@ -146,8 +146,6 @@ Make sentences end with one space instead of two spaces
     :config (evil-commentary-mode))
   (use-package evil-tutor
     :ensure t)
-  (use-package evil-ediff
-    :ensure t)
 
 #+END_SRC
 *** Dired customizations
