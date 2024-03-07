@@ -9,8 +9,8 @@ else
     # don't put duplicate lines in the history. See bash(1) for more options
     export HISTCONTROL=ignoredups
     export HISTCONTROL=ignoreboth
-    export HISTFILESIZE=2000000
-    export HISTSIZE=-1
+    export HISTFILESIZE=
+    export HISTSIZE=
     export HISTTIMEFORMAT="%F %T "
     shopt -s histappend
     shopt -s histreedit
@@ -53,31 +53,9 @@ else
     complete -F _completemarks jump unmark
 
     
-    ##################################################
-    # Fancy PWD display function
-    ##################################################
-    # The home directory (HOME) is replaced with a ~
-    # The last pwdmaxlen characters of the PWD are displayed
-    # Leading partial directory names are striped off
-    # /home/me/stuff          -> ~/stuff               if USER=me
-    # /usr/share/big_dir_name -> ../share/big_dir_name if pwdmaxlen=20
-    ##################################################
-    bash_prompt_command() {
-	# How many characters of the $PWD should be kept
-	local pwdmaxlen=25
-	# Indicate that there has been dir truncation
-	local trunc_symbol=".."
-	local dir=${PWD##*/}
-	pwdmaxlen=$(( ( pwdmaxlen < ${#dir} ) ? ${#dir} : pwdmaxlen ))
-	NEW_PWD=${PWD/#$HOME/\~}
-	local pwdoffset=$(( ${#NEW_PWD} - pwdmaxlen ))
-	if [ ${pwdoffset} -gt "0" ]
-	then
-	    NEW_PWD=${NEW_PWD:$pwdoffset:$pwdmaxlen}
-	    NEW_PWD=${trunc_symbol}/${NEW_PWD#*/}
-	fi
-    }
     bash_prompt() {
+	local EXIT="$?"
+	PS1=""
 	case $TERM in
 	    xterm*|rxvt*)
 		local TITLEBAR='\[\033]0;\u:${NEW_PWD}\007\]'
@@ -86,8 +64,6 @@ else
 		local TITLEBAR=""
 		;;
 	esac
-	local NONE="\[\033[0m\]"    # unsets color to term's fg color
-	
 	# ANSI color codes
 
 	local RS="\[\033[0m\]"    # reset
@@ -111,19 +87,23 @@ else
 	local BCYN="\[\033[46m\]" # background cyan
 	local BWHT="\[\033[47m\]" # background white
 	
-	#PS1="$FGRN\u@$FBLE\h:$FMAG\w$FBLE\\$ $RS"
-	PS2="> $RS"
-
-	local UC=$W                 # user's color
+	local UC=$FCYN                 # user's color
 	[ $UID -eq "0" ] && UC=$FRED   # root's color
-	
-	PS1="$TITLEBAR${FGRN}\u@${FBLE}\h:${FMAG}\${NEW_PWD}${FGRN}\\$ ${RS}"
-	# without colors: PS1="[\u@\h \${NEW_PWD}]\\$ "
-	# extra backslash in front of \$ to make bash colorize the prompt
+
+	PS2="$UC> $RS"
+	PS1+="$TITLEBAR"
+	if [ $EXIT -eq 0 ]; then
+	    PS1+="$FGRN[\!]$RS "
+	else
+	    PS1+="$RED[\!]$RS "
+	fi
+	if [ -n "$SSH_TTY" ]; then
+	    PS1+="$FYEL(${SSH_CLIENT%% *})$RS ";
+	fi
+	PS1+="$UC\u$RS@$FGRN\h$RS:$FMAG\w$RS "
+	PS1+="\n\$ "
     }
-    PROMPT_COMMAND=bash_prompt_command
-    bash_prompt
-    unset bash_prompt
+    PROMPT_COMMAND="bash_prompt; history -a"
 
     # enable bash completion in interactive shells
     if ! shopt -oq posix; then
