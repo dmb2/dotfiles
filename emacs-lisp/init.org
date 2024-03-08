@@ -783,7 +783,7 @@ happen.
 
 
 ** Org-mode static site publishing
-*** Research Log Book
+** The HEP guide
 #+BEGIN_SRC emacs-lisp
   (setq org-html-metadata-timestamp-format "%m/%d/%Y"
    org-publish-project-alist
@@ -807,14 +807,30 @@ happen.
       :publishing-directory "~/public/the-guide/images/"
       :recursive t
       :publishing-function org-publish-attachment)
-     
+
      ("thhg-css"
       :base-directory "~/hitchhikers-guide-to-hep/css/"
       :base-extension "css\\|el"
       :recursive t
       :publishing-directory "~/public/the-guide/"
       :publishing-function org-publish-attachment)
-     ("thhg-website" :components ("thhg-orgfiles" "thhg-images" "thhg-other" "thhg-css"))
+     ("thhg-website" :components ("thhg-orgfiles" "thhg-images" "thhg-css"))
+
+     ("stumpwm-files"
+      :base-directory "~/stumpwm.github.io/"
+      :base-extension "org"
+      :publishing-directory "~/stumpwm.github.io/"
+      :recursive t
+      :publishing-function org-html-publish-to-html
+      :headline-levels 5
+      :auto-preamble t
+      :section-numbers nil
+      :table-of-contents t
+      :style-include-default nil
+      :html-head "<link rel=\"stylesheet\" type=\"text/css\" href=\"./style.css\" />"
+      :html-preamble t
+      :html-postamble "<p></p>")
+     ("stumpwm-website" :components ("stumpwm-files"))
      ))
 #+END_SRC
 
