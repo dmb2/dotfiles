@@ -568,8 +568,8 @@ Load slime for clisp hacking
 
 ** Default font
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(font . "Fira Code-12"))
-;(add-to-list 'default-frame-alist '(font . "Berkeley Mono-12"))
+;(add-to-list 'default-frame-alist '(font . "Fira Code-12"))
+(add-to-list 'default-frame-alist '(font . "Berkeley Mono-12"))
 #+END_SRC
 ** Diary
 #+BEGIN_SRC emacs-lisp
