@@ -175,7 +175,7 @@ mode-line"
 (define-key *root-map* (kbd "e") "exec emacsclient -c")
 
 ;; Browsing
-(define-key *root-map* (kbd "C-f") "exec firefox")
+(define-key *root-map* (kbd "C-f") "exec microsoft-edge")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;; Startup programs ;;;;;;;;;;;;;;;;;

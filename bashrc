@@ -95,7 +95,7 @@ else
 	if [ $EXIT -eq 0 ]; then
 	    PS1+="$FGRN[\!]$RS "
 	else
-	    PS1+="$RED[\!]$RS "
+	    PS1+="$FRED[\!]$RS "
 	fi
 	if [ -n "$SSH_TTY" ]; then
 	    PS1+="$FYEL(${SSH_CLIENT%% *})$RS ";
