@@ -26,7 +26,7 @@
  '(magit-diff-use-overlays nil)
  '(magit-use-overlays nil)
  '(package-selected-packages
-   '(docker docker-compose-mode dockerfile-mode elpa-clone rust-mode flexoki-themes magit markdown-mode slime hydra sly-asdf sly-repl-ansi-color evil-string-inflection string-inflection gruvbox-theme org-ref evil-lispy lispy eieio web-beautify twittering-mode smex shell-switcher scratch robe rect-mark parsebib paredit paradox org-bullets notify names key-chord jabber goto-last-change flycheck f evil-tutor evil-surround evil-smartparens evil-numbers evil-nerd-commenter evil-magit evil-leader evil-ediff evil-commentary emojify emms-player-mpv drag-stuff company c-eldoc biblio bbdb))
+   '(tuareg yaml-mode docker docker-compose-mode dockerfile-mode elpa-clone rust-mode flexoki-themes magit markdown-mode slime hydra sly-asdf sly-repl-ansi-color evil-string-inflection string-inflection gruvbox-theme org-ref evil-lispy lispy eieio web-beautify twittering-mode smex shell-switcher scratch robe rect-mark parsebib paredit paradox org-bullets notify names key-chord jabber goto-last-change flycheck f evil-tutor evil-surround evil-smartparens evil-numbers evil-nerd-commenter evil-magit evil-leader evil-ediff evil-commentary emojify emms-player-mpv drag-stuff company c-eldoc biblio bbdb))
  '(paradox-automatically-star nil)
  '(safe-local-variable-values
    '((Lowercase . T)
@@ -56,14 +56,14 @@
  ;; If there is more than one, they won't work right.
  '(italic ((t (:slant italic))))
  '(org-document-title ((t (:inherit default :weight bold :foreground "#fffcf0" :height 1.5 :underline nil))))
- '(org-level-1 ((t (:inherit default :weight bold :foreground "#CECDC3" :font "Source Sans Pro" :height 1.75))))
- '(org-level-2 ((t (:inherit default :weight bold :foreground "#CECDC3" :font "Source Sans Pro" :height 1.5))))
- '(org-level-3 ((t (:inherit default :weight bold :foreground "#CECDC3" :font "Source Sans Pro" :height 1.25))))
- '(org-level-4 ((t (:inherit default :weight bold :foreground "#CECDC3" :font "Source Sans Pro" :height 1.1))))
- '(org-level-5 ((t (:inherit default :weight bold :foreground "#CECDC3" :font "Source Sans Pro"))))
- '(org-level-6 ((t (:inherit default :weight bold :foreground "#CECDC3" :font "Source Sans Pro"))))
- '(org-level-7 ((t (:inherit default :weight bold :foreground "#CECDC3" :font "Source Sans Pro"))))
- '(org-level-8 ((t (:inherit default :weight bold :foreground "#CECDC3" :font "Source Sans Pro"))))
+ '(org-level-1 ((t (:inherit default :weight bold :foreground "#CECDC3" :font "Sans" :height 1.75))))
+ '(org-level-2 ((t (:inherit default :weight bold :foreground "#CECDC3" :font "Sans" :height 1.5))))
+ '(org-level-3 ((t (:inherit default :weight bold :foreground "#CECDC3" :font "Sans" :height 1.25))))
+ '(org-level-4 ((t (:inherit default :weight bold :foreground "#CECDC3" :font "Sans" :height 1.1))))
+ '(org-level-5 ((t (:inherit default :weight bold :foreground "#CECDC3" :font "Sans"))))
+ '(org-level-6 ((t (:inherit default :weight bold :foreground "#CECDC3" :font "Sans"))))
+ '(org-level-7 ((t (:inherit default :weight bold :foreground "#CECDC3" :font "Sans"))))
+ '(org-level-8 ((t (:inherit default :weight bold :foreground "#CECDC3" :font "Sans"))))
  '(tex-verbatim ((t nil)))
  '(variable-pitch ((t (:height 1.3 :family "Crimson")))))
 

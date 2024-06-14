@@ -1,13 +1,16 @@
 escape ^tt
+vbell off
 hardstatus alwayslastline
-harstatus string "%{= KW} %{= Kw}|%{-} %-Lw%{= bW}%n%f %t%{-}%+Lw %=%C%a %Y-%M-%d"
+hardstatus string "%{= kw} %-Lw%{= bW}%n %f %t%{-}%+Lw %=%C%a %Y-%M-%d"
+
 def scrollback 100000
 
 attrcolor b ".I"
-
 termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=E[38;5;%dm'
 termcapinfo xterm ti@:te@
+autodetach on
 defbce on
+
 bind c screen 1
 bind 0 select 10
 bind s split
