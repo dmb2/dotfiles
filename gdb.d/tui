@@ -1,0 +1,7 @@
+set tui compact-source on
+set tui mouse-events on
+set tui border-kind acs
+set tui active-border-mode bold-standout
+set tui border-mode normal
+
+tui new-layout sre {-horizontal asm 1 regs 1} 1 cmd 1
