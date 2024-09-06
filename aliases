@@ -1,0 +1,4 @@
+alias ll='ls -lah'
+alias vi=vim
+alias pip='pip3'
+alias gdb='gdb -q'

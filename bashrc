@@ -145,9 +145,6 @@ export GROFF_NO_SGR=1         # For Konsole and Gnome-terminal
 export LESS="--RAW-CONTROL-CHARS"
 
 
-alias ll='ls -lah'
-alias vi=vim
-alias pip='pip3'
 load_file $HOME/.git-completion.sh
 load_file $HOME/.aliases
 load_file $HOME/.rvm/scripts/rvm

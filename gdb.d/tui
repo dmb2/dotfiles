@@ -1,7 +1,15 @@
-set tui compact-source on
-set tui mouse-events on
 set tui border-kind acs
-set tui active-border-mode bold-standout
 set tui border-mode normal
+set tui active-border-mode half
+set tui compact-source on
+set tui tab-width 4
+set tui mouse-events on
 
-tui new-layout sre {-horizontal asm 1 regs 1} 1 cmd 1
+tui new-layout src-context {-horizontal src 1 asm 1 } 1 cmd 1 regs 1
+tui new-layout asm-context {-horizontal asm 1 regs 1 } 1 cmd 1
+
+define tui-context
+	layout src-context
+	winheight regs -4
+end
+
