@@ -87,7 +87,7 @@
 (defun cat (&rest strings) "Concatenates strings, like the Unix command 'cat'. A shortcut for (concatenate 'string foo bar)."
   (apply 'concatenate 'string strings))
 
-(defparameter *wallpaper* "$(ls wallpaper/* | sort -R | head -n 1)")
+(defparameter *wallpaper* "$(ls wallpaper/* | shuf | head -n 1)")
 
 (defparameter X-TERM "exec xterm -fa \"Berkeley Mono\" "
 "X-TERM command definition so we can launch a terminal emulator")
