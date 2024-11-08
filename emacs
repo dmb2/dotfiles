@@ -21,12 +21,13 @@
  '(erc-away-nickname "dmb2-AFK")
  '(erc-nick "dmb2")
  '(erc-prompt-for-password nil)
+ '(helm-minibuffer-history-key "M-p")
  '(inhibit-startup-screen t)
  '(jabber-autoaway-status "Away")
  '(magit-diff-use-overlays nil)
  '(magit-use-overlays nil)
  '(package-selected-packages
-   '(tuareg yaml-mode docker docker-compose-mode dockerfile-mode elpa-clone rust-mode flexoki-themes magit markdown-mode slime hydra sly-asdf sly-repl-ansi-color evil-string-inflection string-inflection gruvbox-theme org-ref evil-lispy lispy eieio web-beautify twittering-mode smex shell-switcher scratch robe rect-mark parsebib paredit paradox org-bullets notify names key-chord jabber goto-last-change flycheck f evil-tutor evil-surround evil-smartparens evil-numbers evil-nerd-commenter evil-magit evil-leader evil-ediff evil-commentary emojify emms-player-mpv drag-stuff company c-eldoc biblio bbdb))
+   '(cmake-mode ace-window tuareg yaml-mode docker docker-compose-mode dockerfile-mode elpa-clone rust-mode flexoki-themes magit markdown-mode slime hydra sly-asdf sly-repl-ansi-color evil-string-inflection string-inflection gruvbox-theme org-ref evil-lispy lispy eieio web-beautify twittering-mode smex shell-switcher scratch robe rect-mark parsebib paredit paradox org-bullets notify names key-chord jabber goto-last-change flycheck f evil-tutor evil-surround evil-smartparens evil-numbers evil-nerd-commenter evil-magit evil-leader evil-ediff evil-commentary emojify emms-player-mpv drag-stuff company c-eldoc biblio bbdb))
  '(paradox-automatically-star nil)
  '(safe-local-variable-values
    '((Lowercase . T)

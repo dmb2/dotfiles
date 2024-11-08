@@ -113,14 +113,6 @@ eval `dircolors -b ~/dotfiles/dircolors`
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
-# Sets up vim to be a lesspipe if the script is found
-less_sh=$(find /usr/share/vim/ -name 'less.sh')
-HL=$(which highlight)
-if [ -n "$HL" ]; then
-    export LESSOPEN="| /usr/bin/highlight %s --out-format xterm256 --force"
-elif [ -f "$less_sh" ]; then
-    alias less="$less_sh"
-fi
 
 alias ls='ls --color=auto'
 alias sl='ls --color=auto'
@@ -165,3 +157,4 @@ view-plots(){
 }    
 
 load_file ${HOME}/.next_init
+. "$HOME/.cargo/env"
