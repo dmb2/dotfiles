@@ -142,6 +142,7 @@ load_file $HOME/.aliases
 load_file $HOME/.rvm/scripts/rvm
 export MANPATH="$HOME/.local/share/man:${HOME}/local/share/man:$MANPATH"
 export PATH="$HOME/.local/node-v12.16.3-linux-x64/bin:$HOME/.local/bin:$PATH"
+export PATH="$HOME/.local/usr/local/bin:$PATH"
 export EDITOR=vim
 load_file "$HOME/.cargo/env"
 

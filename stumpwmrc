@@ -87,7 +87,7 @@
 (defun cat (&rest strings) "Concatenates strings, like the Unix command 'cat'. A shortcut for (concatenate 'string foo bar)."
   (apply 'concatenate 'string strings))
 
-(defparameter *wallpaper* "$(ls wallpaper/* | shuf | head -n 1)")
+(defparameter *wallpaper* "$(ls car_wallpapers/* | shuf | head -n 1)")
 
 (defparameter X-TERM "exec xterm -fa \"Berkeley Mono\" "
 "X-TERM command definition so we can launch a terminal emulator")
@@ -124,7 +124,7 @@
      (shell-command command))
 
 (defun set-wallpaper (wallpaper)
-  (run-shell-command (concatenate 'string "feh --bg-scale " wallpaper)))
+  (run-shell-command (concatenate 'string "feh --bg-fill " wallpaper)))
 
 
 (defun replace-all (string part replacement &key (test #'char=))
@@ -175,7 +175,7 @@ mode-line"
 (define-key *root-map* (kbd "e") "exec emacsclient -c")
 
 ;; Browsing
-(define-key *root-map* (kbd "C-f") "exec firefox")
+(define-key *root-map* (kbd "C-f") "exec google-chrome")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;; Startup programs ;;;;;;;;;;;;;;;;;
